@@ -122,9 +122,34 @@
                     <p id="modal-description"></p>
                     <p class="modal-technique" id="modal-technique"></p>
                     <p class="modal-price" id="modal-price"></p>
-                    <a href="#" class="btn-buy" id="modal-buy">Купить картину</a>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        <a href="#" class="btn-buy" id="modal-buy">Купить картину</a>
+                        <button type="button" class="btn-primary" id="modal-ar-btn">Примерить в AR</button>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- AR Модальное окно -->
+    <div class="modal ar-modal" id="ar-modal" aria-hidden="true">
+        <div class="ar-modal-content">
+            <div class="ar-topbar">
+                <span class="ar-title" id="ar-title">AR-примерка</span>
+                <button class="ar-close" id="ar-close" aria-label="Закрыть">×</button>
+            </div>
+            <div class="ar-stage" id="ar-stage">
+                <video id="ar-video" playsinline autoplay muted></video>
+                <!-- Перекрытие с картиной -->
+                <div id="ar-overlay" class="ar-overlay"></div>
+                <div class="ar-hint">Пальцами: перетаскивайте, увеличивайте, вращайте</div>
+            </div>
+            <div class="ar-toolbar">
+                <button class="ar-btn" id="ar-reset">Сбросить</button>
+                <button class="ar-btn" id="ar-flip">Сменить камеру</button>
+                <button class="ar-btn ar-btn-primary" id="ar-snap">Сделать снимок</button>
+            </div>
+            <canvas id="ar-canvas" style="display:none;"></canvas>
         </div>
     </div>
 

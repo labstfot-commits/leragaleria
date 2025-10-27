@@ -75,6 +75,7 @@ const modalTechnique = document.getElementById('modal-technique');
 const modalPrice = document.getElementById('modal-price');
 const modalImage = document.getElementById('modal-image');
 const modalBuy = document.getElementById('modal-buy');
+const modalArBtn = document.getElementById('modal-ar-btn');
 
 // Открытие модального окна
 galleryItems.forEach(item => {
@@ -94,6 +95,10 @@ galleryItems.forEach(item => {
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Подготовка AR — передаём данные текущей картины
+            currentAR.painting = painting;
+            updateAROverlay();
         }
     });
 });
@@ -161,5 +166,199 @@ document.querySelectorAll('.btn-primary, .btn-buy').forEach(btn => {
     btn.addEventListener('mouseenter', function() {
         this.style.transition = 'all 0.3s ease';
     });
+});
+
+// =============================
+// AR ПРИМЕРКА
+// =============================
+const arModal = document.getElementById('ar-modal');
+const arVideo = document.getElementById('ar-video');
+const arOverlay = document.getElementById('ar-overlay');
+const arClose = document.getElementById('ar-close');
+const arReset = document.getElementById('ar-reset');
+const arFlip = document.getElementById('ar-flip');
+const arSnap = document.getElementById('ar-snap');
+const arCanvas = document.getElementById('ar-canvas');
+
+const currentAR = {
+    painting: null,
+    stream: null,
+    facingMode: 'environment', // предпочтительно задняя камера
+    scale: 1,
+    rotation: 0,
+    translateX: 0,
+    translateY: 0,
+    startDistance: 0,
+    startAngle: 0,
+    lastTouches: []
+};
+
+function updateAROverlay() {
+    if (!currentAR.painting) return;
+    // Используем те же градиенты/изображения, что и в модалке
+    arOverlay.style.background = currentAR.painting.image;
+}
+
+async function startARCamera() {
+    try {
+        if (currentAR.stream) {
+            currentAR.stream.getTracks().forEach(t => t.stop());
+        }
+        const constraints = {
+            audio: false,
+            video: {
+                facingMode: { ideal: currentAR.facingMode },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        currentAR.stream = stream;
+        arVideo.srcObject = stream;
+        await arVideo.play();
+        // Зеркалим видео только для user (front)
+        arVideo.style.transform = currentAR.facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+    } catch (e) {
+        alert('Не удалось получить доступ к камере. Проверьте разрешения.');
+        console.error(e);
+    }
+}
+
+function openAR() {
+    if (!currentAR.painting) return;
+    resetARTransform();
+    updateAROverlay();
+    arModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    startARCamera();
+}
+
+function closeAR() {
+    arModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    if (currentAR.stream) {
+        currentAR.stream.getTracks().forEach(t => t.stop());
+        currentAR.stream = null;
+    }
+}
+
+function resetARTransform() {
+    currentAR.scale = 1;
+    currentAR.rotation = 0;
+    currentAR.translateX = 0;
+    currentAR.translateY = 0;
+    applyOverlayTransform();
+}
+
+function applyOverlayTransform() {
+    arOverlay.style.transform = `translate(calc(-50% + ${currentAR.translateX}px), calc(-50% + ${currentAR.translateY}px)) rotate(${currentAR.rotation}deg) scale(${currentAR.scale})`;
+}
+
+// Жесты: drag, pinch, rotate
+let isDragging = false;
+let dragStart = { x: 0, y: 0 };
+
+arOverlay.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    dragStart = { x: e.clientX, y: e.clientY };
+    arOverlay.setPointerCapture(e.pointerId);
+});
+
+arOverlay.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    dragStart = { x: e.clientX, y: e.clientY };
+    currentAR.translateX += dx;
+    currentAR.translateY += dy;
+    applyOverlayTransform();
+});
+
+arOverlay.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    arOverlay.releasePointerCapture(e.pointerId);
+});
+
+// Мульти-тач для pinch/rotate
+const arStage = document.getElementById('ar-stage');
+arStage.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+        currentAR.startDistance = getDistance(e.touches[0], e.touches[1]);
+        currentAR.startAngle = getAngle(e.touches[0], e.touches[1]);
+    }
+});
+
+arStage.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+        const newDistance = getDistance(e.touches[0], e.touches[1]);
+        const newAngle = getAngle(e.touches[0], e.touches[1]);
+        const scaleDelta = newDistance / (currentAR.startDistance || newDistance);
+        const angleDelta = newAngle - (currentAR.startAngle || newAngle);
+        currentAR.scale = clamp(currentAR.scale * scaleDelta, 0.3, 3);
+        currentAR.rotation += angleDelta;
+        currentAR.startDistance = newDistance;
+        currentAR.startAngle = newAngle;
+        applyOverlayTransform();
+        e.preventDefault();
+    }
+}, { passive: false });
+
+function getDistance(t1, t2) {
+    const dx = t2.clientX - t1.clientX;
+    const dy = t2.clientY - t1.clientY;
+    return Math.hypot(dx, dy);
+}
+function getAngle(t1, t2) {
+    const dx = t2.clientX - t1.clientX;
+    const dy = t2.clientY - t1.clientY;
+    return Math.atan2(dy, dx) * 180 / Math.PI;
+}
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+// Кнопки AR
+if (modalArBtn) {
+    modalArBtn.addEventListener('click', openAR);
+}
+arClose.addEventListener('click', closeAR);
+arReset.addEventListener('click', resetARTransform);
+arFlip.addEventListener('click', async () => {
+    currentAR.facingMode = currentAR.facingMode === 'environment' ? 'user' : 'environment';
+    await startARCamera();
+});
+arSnap.addEventListener('click', () => {
+    // Снимок текущего кадра с оверлеем
+    const rect = arVideo.getBoundingClientRect();
+    arCanvas.width = arVideo.videoWidth || 1280;
+    arCanvas.height = arVideo.videoHeight || 720;
+    const ctx = arCanvas.getContext('2d');
+    ctx.save();
+    // Рисуем видео
+    if (currentAR.facingMode === 'user') {
+        ctx.translate(arCanvas.width, 0);
+        ctx.scale(-1, 1); // зеркалим для фронтальной
+    }
+    ctx.drawImage(arVideo, 0, 0, arCanvas.width, arCanvas.height);
+    ctx.restore();
+
+    // Рисуем оверлей (приближённо — прямоугольник по центру с трансформациями)
+    const overlayW = arCanvas.width * 0.6;
+    const overlayH = overlayW * (3/4);
+    const centerX = arCanvas.width / 2 + currentAR.translateX * (arCanvas.width / rect.width);
+    const centerY = arCanvas.height / 2 + currentAR.translateY * (arCanvas.height / rect.height);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(currentAR.rotation * Math.PI / 180);
+    ctx.scale(currentAR.scale, currentAR.scale);
+    // Заливка градиентом (упрощение: рендер без точного CSS-градиента)
+    const grad = ctx.createLinearGradient(-overlayW/2, -overlayH/2, overlayW/2, overlayH/2);
+    grad.addColorStop(0, '#dc2626');
+    grad.addColorStop(1, '#fbbf24');
+    ctx.fillStyle = grad;
+    ctx.fillRect(-overlayW/2, -overlayH/2, overlayW, overlayH);
+
+    const dataUrl = arCanvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'ar-preview.png';
+    a.click();
 });
 
