@@ -36,7 +36,7 @@ body {
 }
 
 .section-title {
-    font-family: 'Nosifer', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 3.5rem;
     font-weight: 400;
     text-align: center;
@@ -141,7 +141,7 @@ body {
 }
 
 .hero h1 {
-    font-family: 'Nosifer', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 5.5rem;
     font-weight: 400;
     color: #ff0000;
@@ -452,7 +452,7 @@ body {
 }
 
 .modal-info h2 {
-    font-family: 'Nosifer', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 2.2rem;
     margin-bottom: 15px;
     color: #ff0000;
@@ -472,7 +472,7 @@ body {
 }
 
 .modal-price {
-    font-family: 'Butcherman', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 2.2rem !important;
     color: #ff0000 !important;
     font-weight: 400;
@@ -648,7 +648,7 @@ body {
 }
 
 .footer-brand h3 {
-    font-family: 'Nosifer', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 2.2rem;
     margin-bottom: 10px;
     color: #ff0000;
@@ -661,7 +661,7 @@ body {
 }
 
 .footer-contact h4 {
-    font-family: 'Nosifer', cursive;
+    font-family: 'Creepster', cursive;
     font-size: 1.3rem;
     margin-bottom: 20px;
     color: #ff6666;
