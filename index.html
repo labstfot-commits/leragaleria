@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Авторские картины и инсталляции. Купить арт напрямую у художницы без посредников.">
+    <title>Голос цвета — картины современной художницы</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Блок 1: Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="fade-in">Голос цвета</h1>
+            <p class="fade-in-delay">Картины, которые смотрят в ответ</p>
+            <a href="#gallery" class="btn-primary fade-in-delay-2">Смотреть галерею</a>
+        </div>
+    </section>
+
+    <!-- Блок 2: Галерея -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <h2 class="section-title">Галерея работ</h2>
+            <div class="gallery-grid">
+                <!-- Картина 1 -->
+                <div class="gallery-item" data-painting="1">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Силуэт свободы</h3>
+                        <p>2024, акрил, 80×100 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 2 -->
+                <div class="gallery-item" data-painting="2">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #ffd93d 0%, #f59f00 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Танцующее тело</h3>
+                        <p>2024, коллаж, 60×80 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 3 -->
+                <div class="gallery-item" data-painting="3">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #a8e063 0%, #6bcf7f 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Зелёный взгляд</h3>
+                        <p>2024, акрил, 70×90 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 4 -->
+                <div class="gallery-item" data-painting="4">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #4ecdc4 0%, #26a69a 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Голубая грусть</h3>
+                        <p>2024, смешанная техника, 90×110 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 5 -->
+                <div class="gallery-item" data-painting="5">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #95e1d3 0%, #f38181 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Цветок страсти</h3>
+                        <p>2024, инсталляция, 100×120 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 6 -->
+                <div class="gallery-item" data-painting="6">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #ffa07a 0%, #ff7f50 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Розовый закат</h3>
+                        <p>2024, акрил, 65×85 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 7 -->
+                <div class="gallery-item" data-painting="7">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #c44569 0%, #9a3a54 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Фиолетовая мечта</h3>
+                        <p>2024, смешанная техника, 75×95 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 8 -->
+                <div class="gallery-item" data-painting="8">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Золотой час</h3>
+                        <p>2024, коллаж, 80×100 см</p>
+                    </div>
+                </div>
+                
+                <!-- Картина 9 -->
+                <div class="gallery-item" data-painting="9">
+                    <div class="gallery-image" style="background: linear-gradient(135deg, #6c5ce7 0%, #4834d4 100%);"></div>
+                    <div class="gallery-overlay">
+                        <h3>Синий ритм</h3>
+                        <p>2024, акрил, 70×90 см</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image" id="modal-image"></div>
+                <div class="modal-info">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description"></p>
+                    <p class="modal-technique" id="modal-technique"></p>
+                    <p class="modal-price" id="modal-price"></p>
+                    <a href="#" class="btn-buy" id="modal-buy">Купить картину</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Блок 3: О художнице -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <div class="artist-silhouette"></div>
+                </div>
+                <div class="about-text">
+                    <h2 class="section-title">О художнице</h2>
+                    <p>
+                        Художница из Иваново, создающая эмоциональные и дерзкие картины о теле, взгляде и свободе.
+                        Работает в смешанных техниках, сочетая акрил, коллаж и инсталляцию.
+                    </p>
+                    <p>
+                        Каждая работа сопровождается сертификатом подлинности и уникальным взглядом на современный мир,
+                        где эмоции становятся краской, а мысли — формой.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок 4: Как купить -->
+    <section class="purchase" id="purchase">
+        <div class="container">
+            <h2 class="section-title">Как купить</h2>
+            <div class="purchase-content">
+                <div class="purchase-list">
+                    <div class="purchase-item">
+                        <div class="purchase-icon">💬</div>
+                        <div class="purchase-text">
+                            <h3>Свяжитесь с автором</h3>
+                            <p>Напишите в Telegram или на e-mail</p>
+                        </div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-icon">💳</div>
+                        <div class="purchase-text">
+                            <h3>Способ оплаты</h3>
+                            <p>Перевод или онлайн-сервис</p>
+                        </div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-icon">📦</div>
+                        <div class="purchase-text">
+                            <h3>Доставка</h3>
+                            <p>По России и СНГ</p>
+                        </div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-icon">🎨</div>
+                        <div class="purchase-text">
+                            <h3>Сертификат подлинности</h3>
+                            <p>Каждая работа — с сертификатом и рамкой под стеклом</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://t.me/artist_profile" class="btn-primary btn-large" target="_blank">Написать автору</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок 5: Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Голос цвета</h3>
+                    <p>Картины, которые смотрят в ответ</p>
+                </div>
+                <div class="footer-contact">
+                    <h4>Контакты</h4>
+                    <a href="mailto:artist@example.com">artist@example.com</a>
+                    <a href="https://t.me/artist_profile" target="_blank">Telegram</a>
+                    <a href="https://instagram.com/artist_profile" target="_blank">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 — Голос цвета. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

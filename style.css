@@ -1,0 +1,573 @@
+/* ============================================
+   ГЛОБАЛЬНЫЕ СТИЛИ
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #f5f1e8;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #f5f1e8;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #dc2626, #fbbf24);
+}
+
+/* ============================================
+   ГЕРОЙ СЕКЦИЯ (BLOCK 1)
+   ============================================ */
+
+.hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23ff6b6b" opacity="0.1" width="1200" height="800"/><path d="M0,200 Q300,100 600,200 T1200,200 L1200,800 L0,800 Z" fill="%23dc2626" opacity="0.05"/></svg>');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 20px;
+}
+
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: #f5f1e8;
+    margin-bottom: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+
+/* Анимация появления */
+.fade-in {
+    animation: fadeIn 1.5s ease-in;
+}
+
+.fade-in-delay {
+    animation: fadeIn 1.5s ease-in 0.5s backwards;
+}
+
+.fade-in-delay-2 {
+    animation: fadeIn 1.5s ease-in 1s backwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Кнопки */
+.btn-primary {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    background: transparent;
+    border-color: #dc2626;
+    color: #dc2626;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+}
+
+.btn-large {
+    padding: 20px 50px;
+    font-size: 1.2rem;
+    display: inline-block;
+    margin-top: 2rem;
+}
+
+/* ============================================
+   ГАЛЕРЕЯ (BLOCK 2)
+   ============================================ */
+
+.gallery {
+    padding: 100px 0;
+    background: #0a0a0a;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s ease;
+    border-radius: 10px;
+}
+
+.gallery-item:hover .gallery-image {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 20px;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    border-radius: 0 0 10px 10px;
+}
+
+.gallery-overlay h3 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+    color: #f5f1e8;
+}
+
+.gallery-overlay p {
+    font-size: 0.9rem;
+    color: #d4af37;
+}
+
+/* ============================================
+   МОДАЛЬНОЕ ОКНО
+   ============================================ */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 900px;
+    width: 90%;
+    position: relative;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #f5f1e8;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #dc2626;
+}
+
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.modal-image {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #dc2626, #fbbf24);
+}
+
+.modal-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #f5f1e8;
+}
+
+.modal-info p {
+    margin-bottom: 15px;
+    color: #d4af37;
+    font-size: 1rem;
+}
+
+.modal-technique {
+    font-size: 0.9rem !important;
+    color: #888 !important;
+}
+
+.modal-price {
+    font-size: 2rem !important;
+    color: #d4af37 !important;
+    font-weight: 700;
+    margin: 20px 0 !important;
+}
+
+.btn-buy {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-align: center;
+}
+
+.btn-buy:hover {
+    background: transparent;
+    border-color: #dc2626;
+    color: #dc2626;
+    transform: translateY(-3px);
+}
+
+/* ============================================
+   О ХУДОЖНИЦЕ (BLOCK 3)
+   ============================================ */
+
+.about {
+    padding: 100px 0;
+    background: #1a1a1a;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.about-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.artist-silhouette {
+    width: 400px;
+    height: 500px;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(244, 191, 36, 0.2));
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.artist-silhouette::before {
+    content: '🎨';
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    font-size: 8rem;
+    opacity: 0.3;
+}
+
+.about-text {
+    padding: 20px;
+}
+
+.about-text h2 {
+    margin-bottom: 30px;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    color: #d4af37;
+}
+
+/* ============================================
+   КАК КУПИТЬ (BLOCK 4)
+   ============================================ */
+
+.purchase {
+    padding: 100px 0;
+    background: #0a0a0a;
+}
+
+.purchase-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.purchase-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.purchase-item {
+    display: flex;
+    gap: 20px;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.purchase-item:hover {
+    transform: translateY(-5px);
+}
+
+.purchase-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.purchase-text h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #f5f1e8;
+}
+
+.purchase-text p {
+    color: #888;
+}
+
+/* ============================================
+   ФУТЕР (BLOCK 5)
+   ============================================ */
+
+.footer {
+    background: #1a1a1a;
+    padding: 60px 0 30px;
+    border-top: 1px solid #333;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 40px;
+}
+
+.footer-brand h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #f5f1e8;
+}
+
+.footer-brand p {
+    color: #d4af37;
+    font-style: italic;
+}
+
+.footer-contact h4 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #f5f1e8;
+}
+
+.footer-contact a {
+    display: block;
+    color: #888;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.footer-contact a:hover {
+    color: #dc2626;
+}
+
+.footer-copyright {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid #333;
+    color: #666;
+}
+
+/* ============================================
+   АДАПТИВНАЯ ВЕРСТКА
+   ============================================ */
+
+@media (max-width: 968px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .artist-silhouette {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .modal-body {
+        grid-template-columns: 1fr;
+    }
+    
+    .purchase-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .btn-primary {
+        padding: 12px 30px;
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 20px;
+    }
+}
+
+/* Плавный скролл с эффектом */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
