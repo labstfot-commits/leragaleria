@@ -671,26 +671,24 @@ body {
 .footer-contact a {
     font-family: 'Creepster', cursive;
     display: block;
-    color: #ff9999;
+    color: #ffffff;
     text-decoration: none;
     margin-bottom: 10px;
-    transition: color 0.3s ease;
-}
-
-.footer-contact a {
     transition: color 0.3s ease, text-shadow 0.3s ease;
+    font-size: 1.1rem;
 }
 .footer-contact a:hover {
     color: #ff0000;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    text-shadow: 0 0 15px rgba(255, 0, 0, 1);
 }
 
 .footer-copyright {
     font-family: 'Creepster', cursive;
     text-align: center;
     padding-top: 30px;
-    border-top: 1px solid #333;
-    color: #ff6666;
+    border-top: ice 1px solid #333;
+    color: #ffffff;
+    font-size: 1rem;
 }
 
 /* ============================================
