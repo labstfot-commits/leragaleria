@@ -1,11 +1,12 @@
 // Данные о картинах
-const paintings = {
+let paintings = {
     1: {
         title: "Силуэт свободы",
         description: "Эта работа исследует границы телесности и свободы самовыражения. Художница использует драматичный контраст красного и чёрного, чтобы передать силу эмоции.",
         technique: "2024, акрил, 80×100 см",
         price: "45 000 ₽",
-        image: "linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%)"
+        image: "linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%)",
+        isUploaded: false
     },
     2: {
         title: "Танцующее тело",
@@ -61,14 +62,35 @@ const paintings = {
         description: "Абстрактная композиция, передающая ритмы города и внутренние переживания. Синий цвет создаёт ощущение глубины и спокойствия.",
         technique: "2024, акрил, 70×90 см",
         price: "40 000 ₽",
-        image: "linear-gradient(135deg, #6c5ce7 0%, #4834d4 100%)"
+        image: "linear-gradient(135deg, #6c5ce7 0%, #4834d4 100%)",
+        isUploaded: false
     }
 };
+
+// Загрузка картин из localStorage
+function loadPaintingsFromStorage() {
+    const stored = localStorage.getItem('uploadedPaintings');
+    if (stored) {
+        const uploadedPaintings = JSON.parse(stored);
+        Object.assign(paintings, uploadedPaintings);
+    }
+}
+
+// Сохранение картин в localStorage
+function savePaintingsToStorage() {
+    const uploadedPaintings = {};
+    Object.keys(paintings).forEach(key => {
+        if (paintings[key].isUploaded) {
+            uploadedPaintings[key] = paintings[key];
+        }
+    });
+    localStorage.setItem('uploadedPaintings', JSON.stringify(uploadedPaintings));
+}
 
 // Получаем элементы
 const modal = document.getElementById('modal');
 const closeBtn = document.querySelector('.close');
-const galleryItems = document.querySelectorAll('.gallery-item');
+let galleryItems = document.querySelectorAll('.gallery-item');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
 const modalTechnique = document.getElementById('modal-technique');
@@ -76,32 +98,13 @@ const modalPrice = document.getElementById('modal-price');
 const modalImage = document.getElementById('modal-image');
 const modalBuy = document.getElementById('modal-buy');
 const modalArBtn = document.getElementById('modal-ar-btn');
+const uploadBtn = document.getElementById('upload-btn');
+const imageUpload = document.getElementById('image-upload');
+const galleryGrid = document.querySelector('.gallery-grid');
+const rotateLeft = document.getElementById('rotate-left');
+const rotateRight = document.getElementById('rotate-right');
 
-// Открытие модального окна
-galleryItems.forEach(item => {
-    item.addEventListener('click', function() {
-        const paintingId = this.getAttribute('data-painting');
-        const painting = paintings[paintingId];
-        
-        if (painting) {
-            modalTitle.textContent = painting.title;
-            modalDescription.textContent = painting.description;
-            modalTechnique.textContent = painting.technique;
-            modalPrice.textContent = painting.price;
-            modalImage.style.background = painting.image;
-            
-            // Ссылка на покупку с текстом о картине
-            modalBuy.href = `https://t.me/artist_profile?text=Здравствуйте! Меня интересует картина "${painting.title}" (${painting.price})`;
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Подготовка AR — передаём данные текущей картины
-            currentAR.painting = painting;
-            updateAROverlay();
-        }
-    });
-});
+// Обработчик клика по элементам галереи теперь в updateGallery()
 
 // Закрытие модального окна
 closeBtn.addEventListener('click', function() {
@@ -168,6 +171,114 @@ document.querySelectorAll('.btn-primary, .btn-buy').forEach(btn => {
     });
 });
 
+// Функция создания элемента галереи
+function createGalleryItem(paintingId, painting) {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.setAttribute('data-painting', paintingId);
+    item.innerHTML = `
+        <div class="gallery-image" style="background: ${painting.image}; background-size: cover; background-position: center;"></div>
+        <div class="gallery-overlay">
+            <h3>${painting.title}</h3>
+            <p>${painting.technique}</p>
+        </div>
+    `;
+    return item;
+}
+
+// Функция обновления галереи
+function updateGallery() {
+    galleryGrid.innerHTML = '';
+    Object.keys(paintings).forEach(id => {
+        const item = createGalleryItem(id, paintings[id]);
+        galleryGrid.appendChild(item);
+    });
+    // Перепривязываем обработчики событий
+    galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const paintingId = this.getAttribute('data-painting');
+            const painting = paintings[paintingId];
+
+            if (painting) {
+                modalTitle.textContent = painting.title;
+                modalDescription.textContent = painting.description;
+                modalTechnique.textContent = painting.technique;
+                modalPrice.textContent = painting.price;
+                modalImage.style.background = painting.image;
+                modalImage.style.backgroundSize = 'cover';
+                modalImage.style.backgroundPosition = 'center';
+
+                // Ссылка на покупку с текстом о картине
+                modalBuy.href = `https://t.me/artist_profile?text=Здравствуйте! Меня интересует картина "${painting.title}" (${painting.price})`;
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                // Сброс поворота изображения
+                resetModalImageRotation();
+
+                // Подготовка AR — передаём данные текущей картины
+                currentAR.painting = painting;
+                updateAROverlay();
+            }
+        });
+    });
+}
+
+// Обработчик загрузки изображений
+uploadBtn.addEventListener('click', () => {
+    imageUpload.click();
+});
+
+imageUpload.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const nextId = Object.keys(paintings).length + 1;
+                paintings[nextId] = {
+                    title: `Загруженная картина ${nextId}`,
+                    description: "Ваша загруженная картина. Описание можно добавить позже.",
+                    technique: `${new Date().getFullYear()}, цифровое изображение`,
+                    price: "Цена по запросу",
+                    image: `url(${event.target.result})`,
+                    isUploaded: true
+                };
+                updateGallery();
+                savePaintingsToStorage();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+// Переменная для отслеживания поворота изображения в модальном окне
+let modalImageRotation = 0;
+
+// Функция поворота изображения в модальном окне
+function rotateModalImage(direction) {
+    modalImageRotation += direction * 90;
+    modalImage.style.transform = `rotate(${modalImageRotation}deg)`;
+}
+
+// Обработчики поворота
+rotateLeft.addEventListener('click', () => rotateModalImage(-1));
+rotateRight.addEventListener('click', () => rotateModalImage(1));
+
+// Сброс поворота при открытии модального окна
+function resetModalImageRotation() {
+    modalImageRotation = 0;
+    modalImage.style.transform = 'rotate(0deg)';
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadPaintingsFromStorage();
+    updateGallery();
+});
+
 // =============================
 // AR ПРИМЕРКА
 // =============================
@@ -175,6 +286,8 @@ const arModal = document.getElementById('ar-modal');
 const arVideo = document.getElementById('ar-video');
 const arOverlay = document.getElementById('ar-overlay');
 const arClose = document.getElementById('ar-close');
+const arRotateLeft = document.getElementById('ar-rotate-left');
+const arRotateRight = document.getElementById('ar-rotate-right');
 const arReset = document.getElementById('ar-reset');
 const arFlip = document.getElementById('ar-flip');
 const arSnap = document.getElementById('ar-snap');
@@ -320,6 +433,14 @@ if (modalArBtn) {
     modalArBtn.addEventListener('click', openAR);
 }
 arClose.addEventListener('click', closeAR);
+arRotateLeft.addEventListener('click', () => {
+    currentAR.rotation -= 15;
+    applyOverlayTransform();
+});
+arRotateRight.addEventListener('click', () => {
+    currentAR.rotation += 15;
+    applyOverlayTransform();
+});
 arReset.addEventListener('click', resetARTransform);
 arFlip.addEventListener('click', async () => {
     currentAR.facingMode = currentAR.facingMode === 'environment' ? 'user' : 'environment';

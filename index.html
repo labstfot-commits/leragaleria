@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="description" content="Авторские картины и инсталляции. Купить арт напрямую у художницы без посредников.">
-    <title>Голос цвета — картины современной художницы</title>
+    <title>Голос Безумия — картины современной художницы</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Creepster&family=Eater&family=Butcherman&family=Pirata+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <section class="hero" id="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="fade-in">Голос цвета</h1>
+            <h1 class="fade-in">Голос Безумия</h1>
             <p class="fade-in-delay">Картины, которые смотрят в ответ</p>
             <a href="#gallery" class="btn-primary fade-in-delay-2">Смотреть галерею</a>
         </div>
@@ -26,6 +26,10 @@
     <section class="gallery" id="gallery">
         <div class="container">
             <h2 class="section-title">Галерея работ</h2>
+            <div class="upload-section">
+                <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+                <button class="btn-primary" id="upload-btn">Загрузить картины</button>
+            </div>
             <div class="gallery-grid">
                 <!-- Картина 1 -->
                 <div class="gallery-item" data-painting="1">
@@ -116,7 +120,13 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="modal-body">
-                <div class="modal-image" id="modal-image"></div>
+                <div class="modal-image-container">
+                    <div class="modal-image" id="modal-image"></div>
+                    <div class="rotation-controls">
+                        <button class="rotate-btn" id="rotate-left" title="Повернуть влево">↺</button>
+                        <button class="rotate-btn" id="rotate-right" title="Повернуть вправо">↻</button>
+                    </div>
+                </div>
                 <div class="modal-info">
                     <h2 id="modal-title"></h2>
                     <p id="modal-description"></p>
@@ -145,6 +155,8 @@
                 <div class="ar-hint">Пальцами: перетаскивайте, увеличивайте, вращайте</div>
             </div>
             <div class="ar-toolbar">
+                <button class="ar-btn" id="ar-rotate-left">↺ Повернуть</button>
+                <button class="ar-btn" id="ar-rotate-right">↻ Повернуть</button>
                 <button class="ar-btn" id="ar-reset">Сбросить</button>
                 <button class="ar-btn" id="ar-flip">Сменить камеру</button>
                 <button class="ar-btn ar-btn-primary" id="ar-snap">Сделать снимок</button>
@@ -220,8 +232,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h3>Голос цвета</h3>
-                    <p>Картины, которые смотрят в ответ</p>
+                    <h3>Голос Безумия</h3>
+                    <p>Картины, которые кричат в ответ</p>
                 </div>
                 <div class="footer-contact">
                     <h4>Контакты</h4>
@@ -231,7 +243,7 @@
                 </div>
             </div>
             <div class="footer-copyright">
-                <p>&copy; 2025 — Голос цвета. Все права защищены.</p>
+                <p>&copy; 2025 — Голос Безумия. Все права защищены.</p>
             </div>
         </div>
     </footer>
