@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
 const { Server } = require('socket.io');
 const nodemailer = require('nodemailer');
 const helmet = require('helmet');
@@ -31,7 +31,7 @@ app.use(helmet({
 app.use(compression());
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/lerina-gallery', {
@@ -131,6 +131,9 @@ app.post('/api/paintings', authenticateToken, async (req, res) => {
 app.post('/api/create-payment-intent', authenticateToken, async (req, res) => {
   try {
     const { amount } = req.body;
+    if (!stripe) {
+      return res.status(500).json({ message: 'Stripe not configured' });
+    }
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Stripe expects amount in cents
       currency: 'rub',
@@ -183,8 +186,9 @@ io.on('connection', (socket) => {
 });
 
 // Serve static files
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.use(express.static(__dirname));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
