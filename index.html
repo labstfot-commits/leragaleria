@@ -10,12 +10,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
 </head>
 <body>
     <!-- Блок 1: Hero Section -->
     <section class="hero" id="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
+            <div class="language-switcher">
+                <button onclick="switchLanguage('ru')">RU</button>
+                <button onclick="switchLanguage('en')">EN</button>
+            </div>
             <h1 class="fade-in">Голос Безумия</h1>
             <p class="fade-in-delay">Картины, которые смотрят в ответ</p>
             <a href="#gallery" class="btn-primary fade-in-delay-2">Смотреть галерею</a>
@@ -26,6 +38,9 @@
     <section class="gallery" id="gallery">
         <div class="container">
             <h2 class="section-title">Галерея работ</h2>
+            <div class="cart-section">
+                <button class="btn-primary" id="cart-btn">Корзина (<span id="cart-count">0</span>)</button>
+            </div>
             <div class="upload-section">
                 <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
                 <button class="btn-primary" id="upload-btn">Загрузить картины</button>
@@ -133,8 +148,10 @@
                     <p class="modal-technique" id="modal-technique"></p>
                     <p class="modal-price" id="modal-price"></p>
                     <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        <button class="btn-buy" id="modal-add-to-cart">Добавить в корзину</button>
                         <a href="#" class="btn-buy" id="modal-buy">Купить картину</a>
                         <button type="button" class="btn-primary" id="modal-ar-btn">Примерить в AR</button>
+                        <button class="btn-share" id="modal-share">Поделиться</button>
                     </div>
                 </div>
             </div>
@@ -227,6 +244,34 @@
         </div>
     </section>
 
+    <!-- Корзина -->
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Корзина</h2>
+                <span class="cart-close">&times;</span>
+            </div>
+            <div id="cart-items"></div>
+            <div class="cart-footer">
+                <p>Итого: <span id="cart-total">0</span> ₽</p>
+                <button id="checkout-btn" class="btn-primary">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Чат -->
+    <div class="chat-widget" id="chat-widget">
+        <div class="chat-header">
+            <span>Чат с художницей</span>
+            <button id="chat-toggle">💬</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Введите сообщение...">
+            <button id="chat-send">Отправить</button>
+        </div>
+    </div>
+
     <!-- Блок 5: Футер -->
     <footer class="footer">
         <div class="container">
@@ -248,7 +293,63 @@
         </div>
     </footer>
 
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://unpkg.com/i18next@21.6.14/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.4/i18nextBrowserLanguageDetector.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // i18next for multi-language support
+        i18next.init({
+            lng: 'ru',
+            resources: {
+                ru: {
+                    translation: {
+                        "hero_title": "Голос Безумия",
+                        "hero_subtitle": "Картины, которые смотрят в ответ",
+                        "gallery_title": "Галерея работ",
+                        "about_title": "О художнице",
+                        "purchase_title": "Как купить"
+                    }
+                },
+                en: {
+                    translation: {
+                        "hero_title": "Voice of Madness",
+                        "hero_subtitle": "Paintings that stare back",
+                        "gallery_title": "Gallery",
+                        "about_title": "About the Artist",
+                        "purchase_title": "How to Buy"
+                    }
+                }
+            }
+        });
+
+        // Update text on language change
+        i18next.on('languageChanged', () => {
+            document.querySelector('h1').textContent = i18next.t('hero_title');
+            document.querySelector('.hero p').textContent = i18next.t('hero_subtitle');
+            document.querySelector('#gallery h2').textContent = i18next.t('gallery_title');
+            document.querySelector('#about h2').textContent = i18next.t('about_title');
+            document.querySelector('#purchase h2').textContent = i18next.t('purchase_title');
+        });
+
+        // Language switcher
+        function switchLanguage(lang) {
+            i18next.changeLanguage(lang);
+        }
+    </script>
 </body>
 </html>
 

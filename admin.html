@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель — Голос Безумия</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Админ-панель</h1>
+            <button id="logout-btn" class="btn-primary">Выйти</button>
+        </header>
+
+        <nav class="admin-nav">
+            <button class="nav-btn active" data-section="paintings">Картины</button>
+            <button class="nav-btn" data-section="orders">Заказы</button>
+            <button class="nav-btn" data-section="analytics">Аналитика</button>
+        </nav>
+
+        <main class="admin-main">
+            <section id="paintings-section" class="admin-section active">
+                <h2>Управление картинами</h2>
+                <button id="add-painting-btn" class="btn-primary">Добавить картину</button>
+                <div id="paintings-list" class="paintings-grid"></div>
+            </section>
+
+            <section id="orders-section" class="admin-section">
+                <h2>Заказы</h2>
+                <div id="orders-list"></div>
+            </section>
+
+            <section id="analytics-section" class="admin-section">
+                <h2>Аналитика</h2>
+                <div id="analytics-content">
+                    <div class="analytics-card">
+                        <h3>Всего картин</h3>
+                        <p id="total-paintings">0</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Всего заказов</h3>
+                        <p id="total-orders">0</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Общая выручка</h3>
+                        <p id="total-revenue">0 ₽</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальное окно для добавления/редактирования картины -->
+    <div id="painting-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Добавить картину</h2>
+            <form id="painting-form">
+                <input type="text" id="title" placeholder="Название" required>
+                <textarea id="description" placeholder="Описание" required></textarea>
+                <input type="text" id="technique" placeholder="Техника, год, размер" required>
+                <input type="number" id="price" placeholder="Цена (₽)" required>
+                <input type="file" id="image" accept="image/*" required>
+                <button type="submit" class="btn-primary">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

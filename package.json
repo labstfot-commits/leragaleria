@@ -1,0 +1,36 @@
+{
+  "name": "lerinagaleria",
+  "version": "1.0.0",
+  "description": "Современный минималистичный одностраничный лендинг для художницы из Иваново.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labstfot-commits/leragaleria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labstfot-commits/leragaleria/issues"
+  },
+  "homepage": "https://github.com/labstfot-commits/leragaleria#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "i18next": "^25.6.0",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2",
+    "nodemailer": "^7.0.10",
+    "socket.io": "^4.8.1",
+    "stripe": "^19.2.0",
+    "three": "^0.181.0"
+  }
+}

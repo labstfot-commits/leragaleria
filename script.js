@@ -1,5 +1,167 @@
-// Данные о картинах
-let paintings = {
+// Данные о картинах (теперь загружаются с сервера)
+let paintings = {};
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let currentUser = null;
+
+// Загрузка картин с сервера
+async function loadPaintingsFromServer() {
+    try {
+        const response = await fetch('/api/paintings');
+        const serverPaintings = await response.json();
+        paintings = {};
+        serverPaintings.forEach(painting => {
+            paintings[painting._id] = {
+                ...painting,
+                price: painting.price + ' ₽'
+            };
+        });
+        updateGallery();
+    } catch (error) {
+        console.error('Error loading paintings:', error);
+        // Fallback to local storage
+        const stored = localStorage.getItem('uploadedPaintings');
+        if (stored) {
+            paintings = JSON.parse(stored);
+        }
+    }
+}
+
+// Функции корзины
+function addToCart(paintingId) {
+    const painting = paintings[paintingId];
+    if (painting) {
+        cart.push(painting);
+        updateCartCount();
+        saveCart();
+        alert('Картина добавлена в корзину!');
+    }
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartCount();
+    saveCart();
+    showCart();
+}
+
+function updateCartCount() {
+    document.getElementById('cart-count').textContent = cart.length;
+}
+
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function showCart() {
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    cartItems.innerHTML = '';
+
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<p>Корзина пуста</p>';
+        cartTotal.textContent = '0';
+        return;
+    }
+
+    let total = 0;
+    cart.forEach((item, index) => {
+        const price = parseInt(item.price.replace(/\D/g, ''));
+        total += price;
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.title}" style="width: 50px; height: 50px; object-fit: cover;">
+            <div>
+                <h4>${item.title}</h4>
+                <p>${item.price}</p>
+            </div>
+            <button onclick="removeFromCart(${index})">Удалить</button>
+        `;
+        cartItems.appendChild(itemElement);
+    });
+    cartTotal.textContent = total;
+}
+
+// Функции шэринга
+function sharePainting(painting) {
+    if (navigator.share) {
+        navigator.share({
+            title: painting.title,
+            text: painting.description,
+            url: window.location.href + '#gallery'
+        });
+    } else {
+        // Fallback: copy to clipboard
+        const url = window.location.href + '#gallery';
+        navigator.clipboard.writeText(`${painting.title}\n${painting.description}\n${url}`);
+        alert('Ссылка скопирована в буфер обмена!');
+    }
+}
+
+// Функции чата
+let socket;
+function initChat() {
+    socket = io();
+    socket.on('receiveMessage', (data) => {
+        addMessageToChat(data.message, 'artist');
+    });
+}
+
+function addMessageToChat(message, sender) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.className = `chat-message ${sender}`;
+    messageElement.textContent = message;
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (message) {
+        addMessageToChat(message, 'user');
+        socket.emit('sendMessage', { to: 'artist', message });
+        input.value = '';
+    }
+}
+
+// Функции оформления заказа
+async function checkout() {
+    if (cart.length === 0) {
+        alert('Корзина пуста!');
+        return;
+    }
+
+    try {
+        const total = cart.reduce((sum, item) => sum + parseInt(item.price.replace(/\D/g, '')), 0);
+        const response = await fetch('/api/create-payment-intent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+            },
+            body: JSON.stringify({ amount: total })
+        });
+
+        if (response.ok) {
+            const { clientSecret } = await response.json();
+            // Here you would integrate with Stripe Elements for payment
+            alert('Оплата будет реализована через Stripe. Пока что заказ оформлен.');
+            cart = [];
+            updateCartCount();
+            saveCart();
+            showCart();
+        } else {
+            alert('Ошибка при оформлении заказа');
+        }
+    } catch (error) {
+        console.error('Checkout error:', error);
+    }
+}
+
+// Данные о картинах (fallback)
+let fallbackPaintings = {
     1: {
         title: "Силуэт свободы",
         description: "Эта работа исследует границы телесности и свободы самовыражения. Художница использует драматичный контраст красного и чёрного, чтобы передать силу эмоции.",
@@ -97,6 +259,8 @@ const modalTechnique = document.getElementById('modal-technique');
 const modalPrice = document.getElementById('modal-price');
 const modalImage = document.getElementById('modal-image');
 const modalBuy = document.getElementById('modal-buy');
+const modalAddToCart = document.getElementById('modal-add-to-cart');
+const modalShare = document.getElementById('modal-share');
 const modalArBtn = document.getElementById('modal-ar-btn');
 const uploadBtn = document.getElementById('upload-btn');
 const imageUpload = document.getElementById('image-upload');
@@ -104,7 +268,26 @@ const galleryGrid = document.querySelector('.gallery-grid');
 const rotateLeft = document.getElementById('rotate-left');
 const rotateRight = document.getElementById('rotate-right');
 
-// Обработчик клика по элементам галереи теперь в updateGallery()
+// Элементы корзины и чата
+const cartBtn = document.getElementById('cart-btn');
+const cartModal = document.getElementById('cart-modal');
+const cartClose = document.querySelector('.cart-close');
+const checkoutBtn = document.getElementById('checkout-btn');
+const chatToggle = document.getElementById('chat-toggle');
+const chatSend = document.getElementById('chat-send');
+const chatInput = document.getElementById('chat-input');
+
+// Обработчики событий
+cartBtn.addEventListener('click', () => cartModal.classList.add('active'));
+cartClose.addEventListener('click', () => cartModal.classList.remove('active'));
+checkoutBtn.addEventListener('click', checkout);
+chatToggle.addEventListener('click', () => {
+    document.getElementById('chat-widget').classList.toggle('active');
+});
+chatSend.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
 
 // Закрытие модального окна
 closeBtn.addEventListener('click', function() {
@@ -116,6 +299,9 @@ window.addEventListener('click', function(event) {
     if (event.target === modal) {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
+    }
+    if (event.target === cartModal) {
+        cartModal.classList.remove('active');
     }
 });
 
@@ -209,7 +395,9 @@ function updateGallery() {
                 modalImage.style.backgroundSize = 'cover';
                 modalImage.style.backgroundPosition = 'center';
 
-                // Ссылка на покупку с текстом о картине
+                // Обработчики для модального окна
+                modalAddToCart.onclick = () => addToCart(paintingId);
+                modalShare.onclick = () => sharePainting(painting);
                 modalBuy.href = `https://t.me/artist_profile?text=Здравствуйте! Меня интересует картина "${painting.title}" (${painting.price})`;
 
                 modal.classList.add('active');
@@ -275,8 +463,16 @@ function resetModalImageRotation() {
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    loadPaintingsFromStorage();
-    updateGallery();
+    loadPaintingsFromServer();
+    updateCartCount();
+    initChat();
+    // Fallback to local storage if server fails
+    setTimeout(() => {
+        if (Object.keys(paintings).length === 0) {
+            paintings = fallbackPaintings;
+            updateGallery();
+        }
+    }, 2000);
 });
 
 // =============================

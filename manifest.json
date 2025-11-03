@@ -1,0 +1,43 @@
+{
+  "name": "Голос Безумия — Галерея картин",
+  "short_name": "Голос Безумия",
+  "description": "Авторские картины и инсталляции современной художницы",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0d",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
+  "categories": ["art", "gallery", "shopping"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Галерея",
+      "short_name": "Галерея",
+      "description": "Посмотреть галерею картин",
+      "url": "/#gallery",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "О художнице",
+      "short_name": "О художнице",
+      "description": "Узнать больше о художнице",
+      "url": "/#about",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

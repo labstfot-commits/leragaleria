@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/lerina-gallery
+      - JWT_SECRET=your-production-jwt-secret
+      - STRIPE_SECRET_KEY=your-production-stripe-secret
+      - EMAIL_USER=your-production-email@gmail.com
+      - EMAIL_PASS=your-production-email-password
+    depends_on:
+      - mongo
+    volumes:
+      - ./uploads:/app/uploads
+
+  mongo:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

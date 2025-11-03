@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Голос Безумия</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h1>Вход в админ-панель</h1>
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Пароль" required>
+                <button type="submit" class="btn-primary">Войти</button>
+            </form>
+            <p id="error-message" class="error"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    window.location.href = '/admin.html';
+                } else {
+                    document.getElementById('error-message').textContent = 'Неверные учетные данные';
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = 'Ошибка подключения';
+            }
+        });
+    </script>
+</body>
+</html>
