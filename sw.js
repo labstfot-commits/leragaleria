@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'lerina-gallery-v1';
+const CACHE_NAME = 'voice-of-color-v1';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -63,6 +63,6 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('Голос Безумия', options)
+    self.registration.showNotification('Голос цвета', options)
   );
 });

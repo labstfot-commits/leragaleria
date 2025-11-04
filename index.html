@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
-    <meta name="description" content="Авторские картины и инсталляции. Купить арт напрямую у художницы без посредников.">
-    <title>Голос Безумия — картины современной художницы</title>
+    <meta name="description" content="Голос безумия — авторские картины и инсталляции. Купить арт напрямую у художницы без посредников.">
+    <meta name="keywords" content="картины, искусство, художница, галерея, арт, современное искусство, инсталляции">
+    <meta name="author" content="Голос безумия">
+    <meta property="og:title" content="Голос безумия — картины современной художницы">
+    <meta property="og:description" content="Авторские картины и инсталляции. Купить арт напрямую у художницы без посредников.">
+    <meta property="og:image" content="/path/to/og-image.jpg">
+    <meta property="og:url" content="https://your-domain.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Голос безумия — картины современной художницы</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -18,6 +26,21 @@
         gtag('js', new Date());
         gtag('config', 'GA_MEASUREMENT_ID');
     </script>
+
+    <!-- Yandex Metrika -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(YANDEX_METRIKA_ID, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/YANDEX_METRIKA_ID" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
 <body>
     <!-- Блок 1: Hero Section -->
@@ -28,7 +51,7 @@
                 <button onclick="switchLanguage('ru')">RU</button>
                 <button onclick="switchLanguage('en')">EN</button>
             </div>
-            <h1 class="fade-in">Голос Безумия</h1>
+            <h1 class="fade-in horror-slogan">Голос безумия</h1>
             <p class="fade-in-delay">Картины, которые смотрят в ответ</p>
             <a href="#gallery" class="btn-primary fade-in-delay-2">Смотреть галерею</a>
         </div>
@@ -38,12 +61,21 @@
     <section class="gallery" id="gallery">
         <div class="container">
             <h2 class="section-title">Галерея работ</h2>
-            <div class="cart-section">
-                <button class="btn-primary" id="cart-btn">Корзина (<span id="cart-count">0</span>)</button>
-            </div>
-            <div class="upload-section">
-                <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
-                <button class="btn-primary" id="upload-btn">Загрузить картины</button>
+            <div class="gallery-controls">
+                <div class="search-section">
+                    <input type="text" id="search-input" placeholder="Поиск картин...">
+                    <select id="filter-select">
+                        <option value="">Все картины</option>
+                        <option value="акрил">Акрил</option>
+                        <option value="коллаж">Коллаж</option>
+                        <option value="инсталляция">Инсталляция</option>
+                        <option value="смешанная техника">Смешанная техника</option>
+                    </select>
+                    <button class="btn-primary" id="favorites-btn">Избранное (<span id="favorites-count">0</span>)</button>
+                </div>
+                <div class="cart-section">
+                    <button class="btn-primary" id="cart-btn">Корзина (<span id="cart-count">0</span>)</button>
+                </div>
             </div>
             <div class="gallery-grid">
                 <!-- Картина 1 -->
@@ -149,7 +181,6 @@
                     <p class="modal-price" id="modal-price"></p>
                     <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
                         <button class="btn-buy" id="modal-add-to-cart">Добавить в корзину</button>
-                        <a href="#" class="btn-buy" id="modal-buy">Купить картину</a>
                         <button type="button" class="btn-primary" id="modal-ar-btn">Примерить в AR</button>
                         <button class="btn-share" id="modal-share">Поделиться</button>
                     </div>
@@ -204,6 +235,39 @@
         </div>
     </section>
 
+    <!-- Блок 3.5: Блог -->
+    <section class="blog" id="blog">
+        <div class="container">
+            <h2 class="section-title">За кулисами</h2>
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);"></div>
+                    <div class="blog-content">
+                        <h3>Рождение идеи</h3>
+                        <p>Как рождаются идеи для новых картин и что вдохновляет на творчество...</p>
+                        <span class="blog-date">15 ноября 2024</span>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #f59e0b, #ef4444);"></div>
+                    <div class="blog-content">
+                        <h3>Процесс создания</h3>
+                        <p>Погружение в мир красок и эмоций. Этапы работы над картиной от эскиза до финала...</p>
+                        <span class="blog-date">10 ноября 2024</span>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);"></div>
+                    <div class="blog-content">
+                        <h3>Вдохновение</h3>
+                        <p>Источники вдохновения и как повседневные наблюдения превращаются в искусство...</p>
+                        <span class="blog-date">5 ноября 2024</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <!-- Блок 4: Как купить -->
     <section class="purchase" id="purchase">
         <div class="container">
@@ -239,6 +303,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="newsletter-section">
+                    <h3>Подпишитесь на обновления</h3>
+                    <p>Получайте уведомления о новых картинах и выставках</p>
+                    <div class="newsletter-form">
+                        <input type="email" id="newsletter-email" placeholder="Ваш e-mail">
+                        <button class="btn-primary" id="newsletter-btn">Подписаться</button>
+                    </div>
+                </div>
                 <a href="https://t.me/artist_profile" class="btn-primary btn-large" target="_blank">Написать автору</a>
             </div>
         </div>
@@ -259,26 +331,14 @@
         </div>
     </div>
 
-    <!-- Чат -->
-    <div class="chat-widget" id="chat-widget">
-        <div class="chat-header">
-            <span>Чат с художницей</span>
-            <button id="chat-toggle">💬</button>
-        </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input">
-            <input type="text" id="chat-input" placeholder="Введите сообщение...">
-            <button id="chat-send">Отправить</button>
-        </div>
-    </div>
 
     <!-- Блок 5: Футер -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h3>Голос Безумия</h3>
-                    <p>Картины, которые кричат в ответ</p>
+                    <h3>Голос безумия</h3>
+                    <p>Картины, которые смотрят в ответ</p>
                 </div>
                 <div class="footer-contact">
                     <h4>Контакты</h4>
@@ -288,15 +348,90 @@
                 </div>
             </div>
             <div class="footer-copyright">
-                <p>&copy; 2025 — Голос Безумия. Все права защищены.</p>
+                <p>&copy; 2025 — Голос безумия. Все права защищены.</p>
             </div>
         </div>
     </footer>
 
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://unpkg.com/i18next@21.6.14/i18next.min.js"></script>
     <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.4/i18nextBrowserLanguageDetector.min.js"></script>
     <script src="script.js"></script>
+
+    <!-- Favorites system -->
+    <script>
+        // Система избранного
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function toggleFavorite(paintingId) {
+            const index = favorites.indexOf(paintingId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(paintingId);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteButtons();
+        }
+
+        function isFavorite(paintingId) {
+            return favorites.includes(paintingId);
+        }
+
+        function updateFavoriteButtons() {
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                const paintingId = btn.dataset.painting;
+                const icon = btn.querySelector('.favorite-icon');
+                if (isFavorite(paintingId)) {
+                    icon.textContent = '❤️';
+                    btn.classList.add('active');
+                } else {
+                    icon.textContent = '🤍';
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Добавляем кнопку избранного в модальное окно
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalInfo = document.querySelector('.modal-info');
+            if (modalInfo) {
+                const favoriteBtn = document.createElement('button');
+                favoriteBtn.className = 'btn-primary favorite-btn';
+                favoriteBtn.innerHTML = '<span class="favorite-icon">🤍</span> В избранное';
+                favoriteBtn.onclick = () => {
+                    const paintingId = document.querySelector('.gallery-item[data-painting]').getAttribute('data-painting');
+                    toggleFavorite(paintingId);
+                };
+                modalInfo.appendChild(favoriteBtn);
+            }
+
+            // Обработчик кнопки "Избранное"
+            const favoritesBtn = document.getElementById('favorites-btn');
+            if (favoritesBtn) {
+                favoritesBtn.addEventListener('click', showFavorites);
+            }
+
+            updateFavoritesCount();
+        });
+
+function updateFavoritesCount() {
+    const count = favorites.length;
+    const favoritesCountEl = document.getElementById('favorites-count');
+    if (favoritesCountEl) {
+        favoritesCountEl.textContent = count;
+    }
+}
+
+function showFavorites() {
+    const filtered = {};
+    favorites.forEach(id => {
+        if (paintings[id]) {
+            filtered[id] = paintings[id];
+        }
+    });
+    updateGallery(filtered);
+}
+    </script>
     <script>
         // Register Service Worker
         if ('serviceWorker' in navigator) {
@@ -316,23 +451,25 @@
             lng: 'ru',
             resources: {
                 ru: {
-                    translation: {
-                        "hero_title": "Голос Безумия",
-                        "hero_subtitle": "Картины, которые смотрят в ответ",
-                        "gallery_title": "Галерея работ",
-                        "about_title": "О художнице",
-                        "purchase_title": "Как купить"
-                    }
-                },
-                en: {
-                    translation: {
-                        "hero_title": "Voice of Madness",
-                        "hero_subtitle": "Paintings that stare back",
-                        "gallery_title": "Gallery",
-                        "about_title": "About the Artist",
-                        "purchase_title": "How to Buy"
-                    }
-                }
+                            translation: {
+                                "hero_title": "Голос безумия",
+                                "hero_subtitle": "Картины, которые смотрят в ответ",
+                                "gallery_title": "Галерея работ",
+                                "about_title": "О художнице",
+                                "blog_title": "За кулисами",
+                                "purchase_title": "Как купить"
+                            }
+                        },
+                        en: {
+                            translation: {
+                                "hero_title": "Voice of Madness",
+                                "hero_subtitle": "Paintings that stare back",
+                                "gallery_title": "Gallery",
+                                "about_title": "About the Artist",
+                                "blog_title": "Behind the Scenes",
+                                "purchase_title": "How to Buy"
+                            }
+                        }
             }
         });
 
@@ -342,6 +479,7 @@
             document.querySelector('.hero p').textContent = i18next.t('hero_subtitle');
             document.querySelector('#gallery h2').textContent = i18next.t('gallery_title');
             document.querySelector('#about h2').textContent = i18next.t('about_title');
+            document.querySelector('#blog h2').textContent = i18next.t('blog_title');
             document.querySelector('#purchase h2').textContent = i18next.t('purchase_title');
         });
 

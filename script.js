@@ -70,7 +70,7 @@ function showCart() {
         const itemElement = document.createElement('div');
         itemElement.className = 'cart-item';
         itemElement.innerHTML = `
-            <img src="${item.image}" alt="${item.title}" style="width: 50px; height: 50px; object-fit: cover;">
+            <div class="cart-item-image" style="background: ${item.image}; background-size: cover; background-position: center;"></div>
             <div>
                 <h4>${item.title}</h4>
                 <p>${item.price}</p>
@@ -98,33 +98,6 @@ function sharePainting(painting) {
     }
 }
 
-// Функции чата
-let socket;
-function initChat() {
-    socket = io();
-    socket.on('receiveMessage', (data) => {
-        addMessageToChat(data.message, 'artist');
-    });
-}
-
-function addMessageToChat(message, sender) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageElement = document.createElement('div');
-    messageElement.className = `chat-message ${sender}`;
-    messageElement.textContent = message;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim();
-    if (message) {
-        addMessageToChat(message, 'user');
-        socket.emit('sendMessage', { to: 'artist', message });
-        input.value = '';
-    }
-}
 
 // Функции оформления заказа
 async function checkout() {
@@ -135,28 +108,32 @@ async function checkout() {
 
     try {
         const total = cart.reduce((sum, item) => sum + parseInt(item.price.replace(/\D/g, '')), 0);
-        const response = await fetch('/api/create-payment-intent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-            },
-            body: JSON.stringify({ amount: total })
-        });
 
-        if (response.ok) {
-            const { clientSecret } = await response.json();
-            // Here you would integrate with Stripe Elements for payment
-            alert('Оплата будет реализована через Stripe. Пока что заказ оформлен.');
-            cart = [];
-            updateCartCount();
-            saveCart();
-            showCart();
-        } else {
-            alert('Ошибка при оформлении заказа');
-        }
+        // Создаем сообщение с заказом для Telegram
+        let orderMessage = 'Здравствуйте! Хочу заказать картины:\n\n';
+        cart.forEach((item, index) => {
+            orderMessage += `${index + 1}. ${item.title} - ${item.price}\n`;
+        });
+        orderMessage += `\nИтого: ${total} ₽\n\nПожалуйста, свяжитесь со мной для оплаты и доставки.`;
+
+        // Кодируем сообщение для URL
+        const encodedMessage = encodeURIComponent(orderMessage);
+
+        // Перенаправляем в Telegram
+        window.open(`https://t.me/artist_profile?text=${encodedMessage}`, '_blank');
+
+        // Очищаем корзину
+        cart = [];
+        updateCartCount();
+        saveCart();
+        showCart();
+
+        // Закрываем модальное окно корзины
+        cartModal.classList.remove('active');
+
     } catch (error) {
         console.error('Checkout error:', error);
+        alert('Ошибка при оформлении заказа');
     }
 }
 
@@ -258,36 +235,25 @@ const modalDescription = document.getElementById('modal-description');
 const modalTechnique = document.getElementById('modal-technique');
 const modalPrice = document.getElementById('modal-price');
 const modalImage = document.getElementById('modal-image');
-const modalBuy = document.getElementById('modal-buy');
 const modalAddToCart = document.getElementById('modal-add-to-cart');
 const modalShare = document.getElementById('modal-share');
 const modalArBtn = document.getElementById('modal-ar-btn');
-const uploadBtn = document.getElementById('upload-btn');
-const imageUpload = document.getElementById('image-upload');
 const galleryGrid = document.querySelector('.gallery-grid');
 const rotateLeft = document.getElementById('rotate-left');
 const rotateRight = document.getElementById('rotate-right');
+const searchInput = document.getElementById('search-input');
+const filterSelect = document.getElementById('filter-select');
 
-// Элементы корзины и чата
+// Элементы корзины
 const cartBtn = document.getElementById('cart-btn');
 const cartModal = document.getElementById('cart-modal');
 const cartClose = document.querySelector('.cart-close');
 const checkoutBtn = document.getElementById('checkout-btn');
-const chatToggle = document.getElementById('chat-toggle');
-const chatSend = document.getElementById('chat-send');
-const chatInput = document.getElementById('chat-input');
 
 // Обработчики событий
 cartBtn.addEventListener('click', () => cartModal.classList.add('active'));
 cartClose.addEventListener('click', () => cartModal.classList.remove('active'));
 checkoutBtn.addEventListener('click', checkout);
-chatToggle.addEventListener('click', () => {
-    document.getElementById('chat-widget').classList.toggle('active');
-});
-chatSend.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-});
 
 // Закрытие модального окна
 closeBtn.addEventListener('click', function() {
@@ -373,10 +339,11 @@ function createGalleryItem(paintingId, painting) {
 }
 
 // Функция обновления галереи
-function updateGallery() {
+function updateGallery(filteredPaintings = null) {
+    const paintingsToShow = filteredPaintings || paintings;
     galleryGrid.innerHTML = '';
-    Object.keys(paintings).forEach(id => {
-        const item = createGalleryItem(id, paintings[id]);
+    Object.keys(paintingsToShow).forEach(id => {
+        const item = createGalleryItem(id, paintingsToShow[id]);
         galleryGrid.appendChild(item);
     });
     // Перепривязываем обработчики событий
@@ -398,7 +365,6 @@ function updateGallery() {
                 // Обработчики для модального окна
                 modalAddToCart.onclick = () => addToCart(paintingId);
                 modalShare.onclick = () => sharePainting(painting);
-                modalBuy.href = `https://t.me/artist_profile?text=Здравствуйте! Меня интересует картина "${painting.title}" (${painting.price})`;
 
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -414,33 +380,26 @@ function updateGallery() {
     });
 }
 
-// Обработчик загрузки изображений
-uploadBtn.addEventListener('click', () => {
-    imageUpload.click();
-});
+// Функции поиска и фильтрации
+function filterPaintings() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const filterValue = filterSelect.value;
 
-imageUpload.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    files.forEach((file, index) => {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const nextId = Object.keys(paintings).length + 1;
-                paintings[nextId] = {
-                    title: `Загруженная картина ${nextId}`,
-                    description: "Ваша загруженная картина. Описание можно добавить позже.",
-                    technique: `${new Date().getFullYear()}, цифровое изображение`,
-                    price: "Цена по запросу",
-                    image: `url(${event.target.result})`,
-                    isUploaded: true
-                };
-                updateGallery();
-                savePaintingsToStorage();
-            };
-            reader.readAsDataURL(file);
+    const filtered = {};
+    Object.keys(paintings).forEach(id => {
+        const painting = paintings[id];
+        const matchesSearch = painting.title.toLowerCase().includes(searchTerm) ||
+                             painting.description.toLowerCase().includes(searchTerm);
+        const matchesFilter = filterValue === '' || painting.technique.toLowerCase().includes(filterValue);
+
+        if (matchesSearch && matchesFilter) {
+            filtered[id] = painting;
         }
     });
-});
+
+    updateGallery(filtered);
+}
+
 
 // Переменная для отслеживания поворота изображения в модальном окне
 let modalImageRotation = 0;
@@ -461,19 +420,23 @@ function resetModalImageRotation() {
     modalImage.style.transform = 'rotate(0deg)';
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    loadPaintingsFromServer();
-    updateCartCount();
-    initChat();
-    // Fallback to local storage if server fails
-    setTimeout(() => {
-        if (Object.keys(paintings).length === 0) {
-            paintings = fallbackPaintings;
-            updateGallery();
-        }
-    }, 2000);
-});
+// Функции для подписки на рассылку
+function subscribeNewsletter() {
+    const email = document.getElementById('newsletter-email').value.trim();
+    if (!email) {
+        alert('Пожалуйста, введите email');
+        return;
+    }
+
+    if (!email.includes('@')) {
+        alert('Пожалуйста, введите корректный email');
+        return;
+    }
+
+    // Здесь можно добавить отправку на сервер
+    alert('Спасибо за подписку! Вы будете получать уведомления о новых картинах.');
+    document.getElementById('newsletter-email').value = '';
+}
 
 // =============================
 // AR ПРИМЕРКА
@@ -678,4 +641,37 @@ arSnap.addEventListener('click', () => {
     a.download = 'ar-preview.png';
     a.click();
 });
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadPaintingsFromServer();
+    updateCartCount();
+
+    // Обработчики для поиска и фильтрации
+    searchInput.addEventListener('input', filterPaintings);
+    filterSelect.addEventListener('change', filterPaintings);
+
+    // Обработчик для кнопки "Избранное"
+    const favoritesBtn = document.getElementById('favorites-btn');
+    if (favoritesBtn) {
+        favoritesBtn.addEventListener('click', showFavorites);
+    }
+
+    updateFavoritesCount();
+
+    // Обработчик для подписки на рассылку
+    document.getElementById('newsletter-btn').addEventListener('click', subscribeNewsletter);
+    document.getElementById('newsletter-email').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') subscribeNewsletter();
+    });
+
+    // Fallback to local storage if server fails
+    setTimeout(() => {
+        if (Object.keys(paintings).length === 0) {
+            paintings = fallbackPaintings;
+            updateGallery();
+        }
+    }, 2000);
+});
+
 
